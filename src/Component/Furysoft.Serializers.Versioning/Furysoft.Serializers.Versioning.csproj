@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageProjectUrl>https://github.com/Furysoft/Serializers-Versioning</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Furysoft/Serializers-Versioning</RepositoryUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/Furysoft/Serializers-Versioning/master/LICENSE</PackageLicenseUrl>
+    <Copyright>© 2017, Simon Paramore</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Furysoft Versioning Serialization</PackageTags>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <Description>Helper methods for serializing Versioned Messages.</Description>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.0.3</Version>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Furysoft.Serializers" Version="1.0.0" />
+    <PackageReference Include="Furysoft.Versioning" Version="1.0.4" />
+    <PackageReference Include="Jetbrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="Stylecop.Analyzers" Version="1.0.2" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>
