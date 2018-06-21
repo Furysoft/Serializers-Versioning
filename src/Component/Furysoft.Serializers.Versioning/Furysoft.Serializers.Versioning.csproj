@@ -12,7 +12,7 @@
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     <Description>Helper methods for serializing Versioned Messages.</Description>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
   </PropertyGroup>
   
   <ItemGroup>
@@ -23,7 +23,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Furysoft.Serializers" Version="1.0.0" />
+    <PackageReference Include="Furysoft.Serializers" Version="1.0.1" />
     <PackageReference Include="Furysoft.Versioning" Version="1.0.4" />
     <PackageReference Include="Jetbrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Stylecop.Analyzers" Version="1.0.2" PrivateAssets="All" />

@@ -24,7 +24,7 @@ namespace Furysoft.Serializers.Versioning
             this string serialized,
             SerializerType serializerType)
         {
-            return serialized.Deserialize<VersionedMessage>();
+            return serialized.Deserialize<VersionedMessage>(serializerType);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Furysoft.Serializers.Versioning
             DtoVersion dtoVersion,
             SerializerType serializerType)
         {
-            var rtn = serialized.Deserialize<VersionedMessage>();
+            var rtn = serialized.Deserialize<VersionedMessage>(serializerType);
             rtn.Version = dtoVersion;
             return rtn;
         }
