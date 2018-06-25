@@ -12,7 +12,7 @@
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     <Description>Helper methods for serializing Versioned Messages.</Description>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
   
   <ItemGroup>
