@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Furysoft.Serializers" Version="1.0.1" />
-    <PackageReference Include="Furysoft.Versioning" Version="1.0.4" />
+    <PackageReference Include="Furysoft.Versioning" Version="1.0.5" />
     <PackageReference Include="Jetbrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Stylecop.Analyzers" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>

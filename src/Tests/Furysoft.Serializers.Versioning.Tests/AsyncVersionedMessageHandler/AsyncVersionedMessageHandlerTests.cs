@@ -1,14 +1,15 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="VersionedMessageHandlerTests.cs" company="Simon Paramore">
+// <copyright file="AsyncVersionedMessageHandlerTests.cs" company="Simon Paramore">
 // © 2017, Simon Paramore
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
+namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Threading.Tasks;
     using Entities;
     using Furysoft.Versioning;
     using Handlers;
@@ -16,16 +17,17 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
     using TestEntities;
 
     /// <summary>
-    /// The Versioned Message Handler Tests
+    /// The AsyncVersionedMessageHandler Tests
     /// </summary>
     [TestFixture]
-    public sealed class VersionedMessageHandlerTests : TestBase
+    public sealed class AsyncVersionedMessageHandlerTests : TestBase
     {
         /// <summary>
         /// Versioned the message handler when batched versioned message expect all processed.
         /// </summary>
+        /// <returns>The <see cref="Task"/></returns>
         [Test]
-        public void VersionedMessageHandler_WhenBatchedVersionedMessage_ExpectAllProcessed()
+        public async Task VersionedMessageHandler_WhenBatchedVersionedMessage_ExpectAllProcessed()
         {
             // Arrange
             var entityOne = default(TestEntityOne);
@@ -33,11 +35,31 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var defaultValue = default(string);
             var exception = default(Exception);
 
-            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.ProtocolBuffers, true)
-                .On<TestEntityOne>(e => entityOne = e)
-                .On<TestEntityTwo>(e => entityTwo = e)
-                .Else(s => defaultValue = s)
-                .OnError(e => exception = e);
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.ProtocolBuffers, true)
+                .On<TestEntityOne>(
+                    e =>
+                    {
+                        entityOne = e;
+                        return Task.CompletedTask;
+                    })
+                .On<TestEntityTwo>(
+                    e =>
+                    {
+                        entityTwo = e;
+                        return Task.CompletedTask;
+                    })
+                .Else(
+                    s =>
+                    {
+                        defaultValue = s;
+                        return Task.CompletedTask;
+                    })
+                .OnError(
+                    e =>
+                    {
+                        exception = e;
+                        return Task.CompletedTask;
+                    });
 
             var batchedVersionedMessage = new BatchedVersionedMessage
             {
@@ -51,7 +73,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            versionedMessageHandler.Post(batchedVersionedMessage);
+            await versionedMessageHandler.PostAsync(batchedVersionedMessage).ConfigureAwait(false);
             stopwatch.Stop();
 
             // Assert
@@ -72,21 +94,37 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         }
 
         /// <summary>
-        /// Versioneds the message handler when error and not throw on error expect handled.
+        /// Versioned the message handler when error and not throw on error expect handled.
         /// </summary>
+        /// <returns>The <see cref="Task"/></returns>
         [Test]
-        public void VersionedMessageHandler_WhenErrorAndNotThrowOnError_ExpectHandled()
+        public async Task VersionedMessageHandler_WhenErrorAndNotThrowOnError_ExpectHandled()
         {
             // Arrange
             var entityTwo = default(TestEntityTwo);
             var defaultValue = default(string);
             var exception = default(Exception);
 
-            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.Json, false)
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.Json, false)
                 .On<TestEntityOne>(e => throw new DivideByZeroException())
-                .On<TestEntityTwo>(e => entityTwo = e)
-                .Else(s => defaultValue = s)
-                .OnError(e => exception = e);
+                .On<TestEntityTwo>(
+                    e =>
+                    {
+                        entityTwo = e;
+                        return Task.CompletedTask;
+                    })
+                .Else(
+                    s =>
+                    {
+                        defaultValue = s;
+                        return Task.CompletedTask;
+                    })
+                .OnError(
+                    e =>
+                    {
+                        exception = e;
+                        return Task.CompletedTask;
+                    });
 
             var versionedMessage = new VersionedMessage
             {
@@ -96,7 +134,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            versionedMessageHandler.Post(versionedMessage);
+            await versionedMessageHandler.PostAsync(versionedMessage).ConfigureAwait(false);
             stopwatch.Stop();
 
             // Assert
@@ -120,11 +158,26 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var defaultValue = default(string);
             var exception = default(Exception);
 
-            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.Json, true)
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.Json, true)
                 .On<TestEntityOne>(e => throw new DivideByZeroException())
-                .On<TestEntityTwo>(e => entityTwo = e)
-                .Else(s => defaultValue = s)
-                .OnError(e => exception = e);
+                .On<TestEntityTwo>(
+                    e =>
+                    {
+                        entityTwo = e;
+                        return Task.CompletedTask;
+                    })
+                .Else(
+                    s =>
+                    {
+                        defaultValue = s;
+                        return Task.CompletedTask;
+                    })
+                .OnError(
+                    e =>
+                    {
+                        exception = e;
+                        return Task.CompletedTask;
+                    });
 
             var versionedMessage = new VersionedMessage
             {
@@ -134,7 +187,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            Assert.Throws<DivideByZeroException>(() => versionedMessageHandler.Post(versionedMessage));
+            Assert.ThrowsAsync<DivideByZeroException>(() => versionedMessageHandler.PostAsync(versionedMessage));
             stopwatch.Stop();
 
             // Assert
@@ -144,8 +197,9 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         /// <summary>
         /// Versioned the message handler when no match expect default.
         /// </summary>
+        /// <returns>The <see cref="Task"/></returns>
         [Test]
-        public void VersionedMessageHandler_WhenNoMatch_ExpectDefault()
+        public async Task VersionedMessageHandler_WhenNoMatch_ExpectDefault()
         {
             // Arrange
             var entityOne = default(TestEntityOne);
@@ -153,11 +207,31 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var defaultValue = default(string);
             var exception = default(Exception);
 
-            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.Json, true)
-                .On<TestEntityOne>(e => entityOne = e)
-                .On<TestEntityTwo>(e => entityTwo = e)
-                .Else(s => defaultValue = s)
-                .OnError(e => exception = e);
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.Json, true)
+                .On<TestEntityOne>(
+                    e =>
+                    {
+                        entityOne = e;
+                        return Task.CompletedTask;
+                    })
+                .On<TestEntityTwo>(
+                    e =>
+                    {
+                        entityTwo = e;
+                        return Task.CompletedTask;
+                    })
+                .Else(
+                    s =>
+                    {
+                        defaultValue = s;
+                        return Task.CompletedTask;
+                    })
+                .OnError(
+                    e =>
+                    {
+                        exception = e;
+                        return Task.CompletedTask;
+                    });
 
             var versionedMessage = new VersionedMessage
             {
@@ -167,7 +241,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            versionedMessageHandler.Post(versionedMessage);
+            await versionedMessageHandler.PostAsync(versionedMessage).ConfigureAwait(false);
             stopwatch.Stop();
 
             // Assert
@@ -184,8 +258,9 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         /// <summary>
         /// Versioned message handler when version match expect action.
         /// </summary>
+        /// <returns>The <see cref="Task"/></returns>
         [Test]
-        public void VersionedMessageHandler_WhenVersionMatchOnFirst_ExpectAction()
+        public async Task VersionedMessageHandler_WhenVersionMatchOnFirst_ExpectAction()
         {
             // Arrange
             var entityOne = default(TestEntityOne);
@@ -193,11 +268,31 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var defaultValue = default(string);
             var exception = default(Exception);
 
-            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.ProtocolBuffers, true)
-                .On<TestEntityOne>(e => entityOne = e)
-                .On<TestEntityTwo>(e => entityTwo = e)
-                .Else(s => defaultValue = s)
-                .OnError(e => exception = e);
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.ProtocolBuffers, true)
+                .On<TestEntityOne>(
+                    e =>
+                    {
+                        entityOne = e;
+                        return Task.CompletedTask;
+                    })
+                .On<TestEntityTwo>(
+                    e =>
+                    {
+                        entityTwo = e;
+                        return Task.CompletedTask;
+                    })
+                .Else(
+                    s =>
+                    {
+                        defaultValue = s;
+                        return Task.CompletedTask;
+                    })
+                .OnError(
+                    e =>
+                    {
+                        exception = e;
+                        return Task.CompletedTask;
+                    });
 
             var versionedMessage = new VersionedMessage
             {
@@ -207,7 +302,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            versionedMessageHandler.Post(versionedMessage);
+            await versionedMessageHandler.PostAsync(versionedMessage).ConfigureAwait(false);
             stopwatch.Stop();
 
             // Assert
@@ -225,8 +320,9 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         /// <summary>
         /// Versioned message handler when version match expect action.
         /// </summary>
+        /// <returns>The <see cref="Task"/></returns>
         [Test]
-        public void VersionedMessageHandler_WhenVersionMatchOnSecond_ExpectAction()
+        public async Task VersionedMessageHandler_WhenVersionMatchOnSecond_ExpectAction()
         {
             // Arrange
             var entityOne = default(TestEntityOne);
@@ -234,11 +330,32 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var defaultValue = default(string);
             var exception = default(Exception);
 
-            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.ProtocolBuffers, true)
-                .On<TestEntityOne>(e => entityOne = e)
-                .On<TestEntityTwo>(typeof(TestEntityTwo).GetVersion(), e => entityTwo = e)
-                .Else(s => defaultValue = s)
-                .OnError(e => exception = e);
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.ProtocolBuffers, true)
+                .On<TestEntityOne>(
+                    e =>
+                    {
+                        entityOne = e;
+                        return Task.CompletedTask;
+                    })
+                .On<TestEntityTwo>(
+                    typeof(TestEntityTwo).GetVersion(),
+                    e =>
+                    {
+                        entityTwo = e;
+                        return Task.CompletedTask;
+                    })
+                .Else(
+                    s =>
+                    {
+                        defaultValue = s;
+                        return Task.CompletedTask;
+                    })
+                .OnError(
+                    e =>
+                    {
+                        exception = e;
+                        return Task.CompletedTask;
+                    });
 
             var versionedMessage = new VersionedMessage
             {
@@ -248,7 +365,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            versionedMessageHandler.Post(versionedMessage);
+            await versionedMessageHandler.PostAsync(versionedMessage).ConfigureAwait(false);
             stopwatch.Stop();
 
             // Assert

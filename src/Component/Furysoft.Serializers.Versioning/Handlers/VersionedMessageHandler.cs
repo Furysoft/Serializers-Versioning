@@ -154,5 +154,17 @@ namespace Furysoft.Serializers.Versioning.Handlers
 
             this.onError(thrown);
         }
+
+        /// <summary>
+        /// Posts the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public void Post(BatchedVersionedMessage message)
+        {
+            foreach (var versionedMessage in message.Messages)
+            {
+                this.Post(versionedMessage);
+            }
+        }
     }
 }

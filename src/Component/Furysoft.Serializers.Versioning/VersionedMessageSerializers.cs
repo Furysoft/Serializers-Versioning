@@ -22,7 +22,7 @@ namespace Furysoft.Serializers.Versioning
         /// <returns>The <see cref="VersionedMessage"/></returns>
         public static VersionedMessage DeserializeToVersionedMessage(
             this string serialized,
-            SerializerType serializerType)
+            SerializerType serializerType = SerializerType.ProtocolBuffers)
         {
             return serialized.Deserialize<VersionedMessage>(serializerType);
         }
@@ -37,7 +37,7 @@ namespace Furysoft.Serializers.Versioning
         public static VersionedMessage DeserializeToVersionedMessage(
             this string serialized,
             DtoVersion dtoVersion,
-            SerializerType serializerType)
+            SerializerType serializerType = SerializerType.ProtocolBuffers)
         {
             var rtn = serialized.Deserialize<VersionedMessage>(serializerType);
             rtn.Version = dtoVersion;
@@ -53,7 +53,7 @@ namespace Furysoft.Serializers.Versioning
         /// <returns>The <see cref="VersionedMessage"/></returns>
         public static VersionedMessage SerializeToVersionedMessage<TEntity>(
             this TEntity entity,
-            SerializerType serializerType)
+            SerializerType serializerType = SerializerType.ProtocolBuffers)
             where TEntity : class
         {
             var data = entity.SerializeToString(serializerType);
@@ -77,7 +77,7 @@ namespace Furysoft.Serializers.Versioning
         public static VersionedMessage SerializeToVersionedMessage<TEntity>(
             this TEntity entity,
             DtoVersion dtoVersion,
-            SerializerType serializerType)
+            SerializerType serializerType = SerializerType.ProtocolBuffers)
             where TEntity : class
         {
             var data = entity.SerializeToString(serializerType);

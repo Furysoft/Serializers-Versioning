@@ -38,7 +38,7 @@ namespace Furysoft.Serializers.Versioning.Tests
 
             Assert.That(vm, Is.Not.Null);
 
-            Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityOne), 1, 0,0)));
+            Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityOne), 1, 0, 0)));
             Assert.That(vm.Data, Is.EqualTo("{\"Value1\":\"test1\",\"Value2\":42}"));
         }
 
@@ -49,7 +49,7 @@ namespace Furysoft.Serializers.Versioning.Tests
         public void SerializeToVersionedMessage_WhenEntityWithDeclaredDtoVersion_ExpectCorrectVersionedMessage()
         {
             // Arrange
-            var testEntityOne = new TestEntityTwo { Value1 = "test1", Value2 = new DateTime(2018,1,1) };
+            var testEntityOne = new TestEntityTwo { Value1 = "test1", Value2 = new DateTime(2018, 1, 1) };
 
             // Act
             var stopwatch = Stopwatch.StartNew();
@@ -77,7 +77,7 @@ namespace Furysoft.Serializers.Versioning.Tests
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            var vm = testEntityOne.DeserializeToVersionedMessage(SerializerType.ProtocolBuffers);
+            var vm = testEntityOne.DeserializeToVersionedMessage();
             stopwatch.Stop();
 
             // Assert
@@ -101,7 +101,7 @@ namespace Furysoft.Serializers.Versioning.Tests
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            var vm = testEntityOne.DeserializeToVersionedMessage(new DtoVersion(typeof(TestEntityTwo), 1, 0, 0), SerializerType.ProtocolBuffers);
+            var vm = testEntityOne.DeserializeToVersionedMessage(new DtoVersion(typeof(TestEntityTwo), 1, 0, 0));
             stopwatch.Stop();
 
             // Assert
