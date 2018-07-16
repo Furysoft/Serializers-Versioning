@@ -20,6 +20,54 @@ namespace Furysoft.Serializers.Versioning.Tests
     public sealed class VersionedMessageSerializersTests : TestBase
     {
         /// <summary>
+        /// Deserializes to versioned message when versioned message expect correct entity.
+        /// </summary>
+        [Test]
+        public void DeserializeToVersionedMessage_WhenVersionedMessage_ExpectCorrectEntity()
+        {
+            // Arrange
+            var testEntityOne = new TestEntityOne { Value1 = "test1", Value2 = 42 }
+                .SerializeToVersionedMessage(SerializerType.Json).SerializeToString();
+
+            // Act
+            var stopwatch = Stopwatch.StartNew();
+            var vm = testEntityOne.DeserializeToVersionedMessage();
+            stopwatch.Stop();
+
+            // Assert
+            this.WriteTimeElapsed(stopwatch);
+
+            Assert.That(vm, Is.Not.Null);
+
+            Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityOne), 1, 0, 0)));
+            Assert.That(vm.Data, Is.EqualTo("{\"Value1\":\"test1\",\"Value2\":42}"));
+        }
+
+        /// <summary>
+        /// Deserializes to versioned message when versioned message with custom version expect correct entity.
+        /// </summary>
+        [Test]
+        public void DeserializeToVersionedMessage_WhenVersionedMessageWithCustomVersion_ExpectCorrectEntity()
+        {
+            // Arrange
+            var testEntityOne = new TestEntityTwo { Value1 = "test1", Value2 = new DateTime(2018, 1, 1) }
+                .SerializeToVersionedMessage(SerializerType.Json).SerializeToString();
+
+            // Act
+            var stopwatch = Stopwatch.StartNew();
+            var vm = testEntityOne.DeserializeToVersionedMessage(new DtoVersion(typeof(TestEntityTwo), 1, 0, 0));
+            stopwatch.Stop();
+
+            // Assert
+            this.WriteTimeElapsed(stopwatch);
+
+            Assert.That(vm, Is.Not.Null);
+
+            Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityTwo), 1, 0, 0)));
+            Assert.That(vm.Data, Is.EqualTo("{\"Value1\":\"test1\",\"Value2\":\"2018-01-01T00:00:00\"}"));
+        }
+
+        /// <summary>
         /// Serializes to versioned message when entity expect correct versioned message.
         /// </summary>
         [Test]
@@ -66,18 +114,17 @@ namespace Furysoft.Serializers.Versioning.Tests
         }
 
         /// <summary>
-        /// Deserializes to versioned message when versioned message expect correct entity.
+        /// Serializes to versioned message when when proto buffer expect correct values.
         /// </summary>
         [Test]
-        public void DeserializeToVersionedMessage_WhenVersionedMessage_ExpectCorrectEntity()
+        public void SerializeToVersionedMessage_WhenWhenProtoBuffer_ExpectCorrectValues()
         {
             // Arrange
-            var testEntityOne = new TestEntityOne { Value1 = "test1", Value2 = 42 }
-                .SerializeToVersionedMessage(SerializerType.Json).SerializeToString();
+            var testEntityOne = new TestEntityOne { Value1 = "test1", Value2 = 12 };
 
             // Act
             var stopwatch = Stopwatch.StartNew();
-            var vm = testEntityOne.DeserializeToVersionedMessage();
+            var vm = testEntityOne.SerializeToVersionedMessage();
             stopwatch.Stop();
 
             // Assert
@@ -86,31 +133,7 @@ namespace Furysoft.Serializers.Versioning.Tests
             Assert.That(vm, Is.Not.Null);
 
             Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityOne), 1, 0, 0)));
-            Assert.That(vm.Data, Is.EqualTo("{\"Value1\":\"test1\",\"Value2\":42}"));
-        }
-
-        /// <summary>
-        /// Deserializes to versioned message when versioned message with custom version expect correct entity.
-        /// </summary>
-        [Test]
-        public void DeserializeToVersionedMessage_WhenVersionedMessageWithCustomVersion_ExpectCorrectEntity()
-        {
-            // Arrange
-            var testEntityOne = new TestEntityTwo { Value1 = "test1", Value2 = new DateTime(2018, 1, 1) }
-                .SerializeToVersionedMessage(SerializerType.Json).SerializeToString();
-
-            // Act
-            var stopwatch = Stopwatch.StartNew();
-            var vm = testEntityOne.DeserializeToVersionedMessage(new DtoVersion(typeof(TestEntityTwo), 1, 0, 0));
-            stopwatch.Stop();
-
-            // Assert
-            this.WriteTimeElapsed(stopwatch);
-
-            Assert.That(vm, Is.Not.Null);
-
-            Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityTwo), 1, 0, 0)));
-            Assert.That(vm.Data, Is.EqualTo("{\"Value1\":\"test1\",\"Value2\":\"2018-01-01T00:00:00\"}"));
+            Assert.That(vm.Data, Is.EqualTo("\n\u0005test1\u0010\f"));
         }
     }
 }
