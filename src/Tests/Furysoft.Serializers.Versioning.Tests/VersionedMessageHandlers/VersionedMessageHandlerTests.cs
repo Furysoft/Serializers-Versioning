@@ -72,6 +72,44 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         }
 
         /// <summary>
+        /// Versioneds the message handler when batched versioned message with no handler expect no action.
+        /// </summary>
+        [Test]
+        public void VersionedMessageHandler_WhenBatchedVersionedMessageWithNoHandler_ExpectNoAction()
+        {
+            // Arrange
+            var entityOne = default(TestEntityOne);
+            var entityTwo = default(TestEntityTwo);
+            var defaultValue = default(string);
+            var exception = default(Exception);
+
+            var versionedMessageHandler = new VersionedMessageHandler(SerializerType.ProtocolBuffers, false);
+
+            var batchedVersionedMessage = new BatchedVersionedMessage
+            {
+                Messages = new List<VersionedMessage>
+                {
+                    new TestEntityOne { Value1 = "test", Value2 = 42 }.SerializeToVersionedMessage(),
+                    new TestEntityTwo { Value1 = "Value1", Value2 = new DateTime(2018, 1, 1) }.SerializeToVersionedMessage(),
+                    new TestEntityThree { Value1 = 3 }.SerializeToVersionedMessage(),
+                }
+            };
+
+            // Act
+            var stopwatch = Stopwatch.StartNew();
+            versionedMessageHandler.Post(batchedVersionedMessage);
+            stopwatch.Stop();
+
+            // Assert
+            this.WriteTimeElapsed(stopwatch);
+
+            Assert.That(entityOne, Is.Null);
+            Assert.That(entityTwo, Is.Null);
+            Assert.That(defaultValue, Is.Null);
+            Assert.That(exception, Is.Null);
+        }
+
+        /// <summary>
         /// Versioneds the message handler when error and not throw on error expect handled.
         /// </summary>
         [Test]

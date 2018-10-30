@@ -148,11 +148,12 @@ namespace Furysoft.Serializers.Versioning.Handlers
 
             if (!isProcessed && thrown == null)
             {
-                this.defaultAction(message.Data);
+                this.defaultAction?.Invoke(message.Data);
+
                 return;
             }
 
-            this.onError(thrown);
+            this.onError?.Invoke(thrown);
         }
 
         /// <summary>

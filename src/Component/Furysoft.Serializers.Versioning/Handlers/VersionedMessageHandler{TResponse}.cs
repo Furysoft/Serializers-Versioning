@@ -151,10 +151,18 @@ namespace Furysoft.Serializers.Versioning.Handlers
 
             if (!isProcessed && thrown == null)
             {
-                return this.defaultAction(message.Data);
+                var rtn = default(TResponse);
+                if (this.defaultAction != null)
+                {
+                    rtn = this.defaultAction.Invoke(message.Data);
+                }
+
+                return rtn;
             }
 
-            return this.onError(thrown);
+            return this.onError != null
+                ? this.onError(thrown)
+                : default(TResponse);
         }
 
         /// <summary>

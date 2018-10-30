@@ -169,11 +169,18 @@ namespace Furysoft.Serializers.Versioning.Handlers
 
             if (!isProcessed && thrown == null)
             {
-                await this.defaultAction(message.Data).ConfigureAwait(false);
+                if (this.defaultAction != null)
+                {
+                    await this.defaultAction(message.Data).ConfigureAwait(false);
+                }
+
                 return;
             }
 
-            await this.onError(thrown).ConfigureAwait(false);
+            if (this.onError != null)
+            {
+                await this.onError(thrown).ConfigureAwait(false);
+            }
         }
     }
 }
