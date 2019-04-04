@@ -7,8 +7,10 @@
 namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Threading.Tasks;
     using Entities;
     using Furysoft.Versioning;
@@ -91,6 +93,50 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
             Assert.That(entityTwo.Value2, Is.EqualTo(new DateTime(2018, 1, 1)));
 
             Assert.That(defaultValue.Deserialize<TestEntityThree>().Value1, Is.EqualTo(3));
+        }
+
+        /// <summary>
+        /// Versioned the message handler when different serializations expect all processed.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task" />
+        /// </returns>
+        [Test]
+        public async Task VersionedMessageHandler_WhenDifferentSerializations_ExpectAllProcessed()
+        {
+            // Arrange
+            var responses = new List<TestEntityOne>();
+
+            var versionedMessageHandler = new AsyncVersionedMessageHandler(SerializerType.ProtocolBuffers, true)
+                .On<TestEntityOne>(
+                    e =>
+                    {
+                        responses.Add(e);
+                        return Task.CompletedTask;
+                    });
+
+            var e1 = new TestEntityOne { Value1 = "test1", Value2 = 42 }.SerializeToVersionedMessage();
+            var e2 = new TestEntityOne { Value1 = "test2", Value2 = 42 }.SerializeToVersionedMessage();
+            var e3 = new TestEntityOne { Value1 = "test3", Value2 = 42 }.SerializeToVersionedMessage(SerializerType.Json);
+            var e4 = new TestEntityOne { Value1 = "test4", Value2 = 42 }.SerializeToVersionedMessage(SerializerType.Xml);
+
+            // Act
+            var stopwatch = Stopwatch.StartNew();
+            await versionedMessageHandler.PostAsync(e1).ConfigureAwait(false);
+            await versionedMessageHandler.PostAsync(e2, SerializerType.ProtocolBuffers).ConfigureAwait(false);
+            await versionedMessageHandler.PostAsync(e3, SerializerType.Json).ConfigureAwait(false);
+            await versionedMessageHandler.PostAsync(e4, SerializerType.Xml).ConfigureAwait(false);
+            stopwatch.Stop();
+
+            // Assert
+            this.WriteTimeElapsed(stopwatch);
+
+            Assert.That(responses.Count, Is.EqualTo(4));
+
+            Assert.That(responses[0].Value1, Is.EqualTo("test1"));
+            Assert.That(responses[1].Value1, Is.EqualTo("test2"));
+            Assert.That(responses[2].Value1, Is.EqualTo("test3"));
+            Assert.That(responses[3].Value1, Is.EqualTo("test4"));
         }
 
         /// <summary>

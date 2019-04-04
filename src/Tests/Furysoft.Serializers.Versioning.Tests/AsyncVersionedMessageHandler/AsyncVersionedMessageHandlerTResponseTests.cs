@@ -95,6 +95,52 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         }
 
         /// <summary>
+        /// Versioned the message handler when different serializations expect all processed.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task" />
+        /// </returns>
+        [Test]
+        public async Task VersionedMessageHandler_WhenDifferentSerializations_ExpectAllProcessed()
+        {
+            // Arrange
+            var versionedMessageHandler = new AsyncVersionedMessageHandler<TestEntityOne>(SerializerType.ProtocolBuffers, true)
+                .On<TestEntityOne>(Task.FromResult);
+
+            var e1 = new TestEntityOne { Value1 = "test1", Value2 = 42 }.SerializeToVersionedMessage();
+            var e2 = new TestEntityOne { Value1 = "test2", Value2 = 42 }.SerializeToVersionedMessage();
+            var e3 = new TestEntityOne { Value1 = "test3", Value2 = 42 }.SerializeToVersionedMessage(SerializerType.Json);
+            var e4 = new TestEntityOne { Value1 = "test4", Value2 = 42 }.SerializeToVersionedMessage(SerializerType.Xml);
+
+            // Act
+            var stopwatch = Stopwatch.StartNew();
+            var r1 = await versionedMessageHandler.PostAsync(e1).ConfigureAwait(false);
+            var r2 = await versionedMessageHandler.PostAsync(e2, SerializerType.ProtocolBuffers).ConfigureAwait(false);
+            var r3 = await versionedMessageHandler.PostAsync(e3, SerializerType.Json).ConfigureAwait(false);
+            var r4 = await versionedMessageHandler.PostAsync(e4, SerializerType.Xml).ConfigureAwait(false);
+
+            var responses = new List<TestEntityOne>
+            {
+                r1,
+                r2,
+                r3,
+                r4
+            };
+
+            stopwatch.Stop();
+
+            // Assert
+            this.WriteTimeElapsed(stopwatch);
+
+            Assert.That(responses.Count, Is.EqualTo(4));
+
+            Assert.That(responses[0].Value1, Is.EqualTo("test1"));
+            Assert.That(responses[1].Value1, Is.EqualTo("test2"));
+            Assert.That(responses[2].Value1, Is.EqualTo("test3"));
+            Assert.That(responses[3].Value1, Is.EqualTo("test4"));
+        }
+
+        /// <summary>
         /// Versioned the message handler when error and not throw on error expect handled.
         /// </summary>
         /// <returns>The <see cref="Task"/></returns>

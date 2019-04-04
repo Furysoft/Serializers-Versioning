@@ -29,7 +29,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <summary>
         /// The serializer type
         /// </summary>
-        private readonly SerializerType serializerType;
+        private readonly SerializerType localSerializerType;
 
         /// <summary>
         /// The throw on error
@@ -53,7 +53,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="throwOnError">if set to <c>true</c> [throw on error].</param>
         public AsyncVersionedMessageHandler(SerializerType serializerType, bool throwOnError)
         {
-            this.serializerType = serializerType;
+            this.localSerializerType = serializerType;
             this.throwOnError = throwOnError;
         }
 
@@ -126,14 +126,15 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// Posts the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <param name="serializerType">Type of the serializer.</param>
         /// <returns>
         /// The <see cref="Task" />
         /// </returns>
-        public async Task PostAsync(BatchedVersionedMessage message)
+        public async Task PostAsync(BatchedVersionedMessage message, SerializerType serializerType = SerializerType.None)
         {
             foreach (var versionedMessage in message.Messages)
             {
-                await this.PostAsync(versionedMessage).ConfigureAwait(false);
+                await this.PostAsync(versionedMessage, serializerType).ConfigureAwait(false);
             }
         }
 
@@ -141,15 +142,19 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// Posts the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <returns>The <see cref="Task"/></returns>
-        public async Task PostAsync(VersionedMessage message)
+        /// <param name="serializerType">Type of the serializer.</param>
+        /// <returns>
+        /// The <see cref="Task" />
+        /// </returns>
+        public async Task PostAsync(VersionedMessage message, SerializerType serializerType = SerializerType.None)
         {
             var thrown = default(Exception);
             var isProcessed = false;
+            var serializer = serializerType == SerializerType.None ? this.localSerializerType : serializerType;
 
             if (this.actions.TryGetValue(message.Version, out var actionType))
             {
-                var deserialize = message.Data.Deserialize(actionType.type, this.serializerType);
+                var deserialize = message.Data.Deserialize(actionType.type, serializer);
 
                 try
                 {

@@ -79,6 +79,49 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         }
 
         /// <summary>
+        /// Versioned the message handler when different serializations expect all processed.
+        /// </summary>
+        [Test]
+        public void VersionedMessageHandler_WhenDifferentSerializations_ExpectAllProcessed()
+        {
+            // Arrange
+            var versionedMessageHandler = new VersionedMessageHandler<TestEntityOne>(SerializerType.ProtocolBuffers, true)
+                .On<TestEntityOne>(r => r);
+
+            var e1 = new TestEntityOne { Value1 = "test1", Value2 = 42 }.SerializeToVersionedMessage();
+            var e2 = new TestEntityOne { Value1 = "test2", Value2 = 42 }.SerializeToVersionedMessage();
+            var e3 = new TestEntityOne { Value1 = "test3", Value2 = 42 }.SerializeToVersionedMessage(SerializerType.Json);
+            var e4 = new TestEntityOne { Value1 = "test4", Value2 = 42 }.SerializeToVersionedMessage(SerializerType.Xml);
+
+            // Act
+            var stopwatch = Stopwatch.StartNew();
+            var r1 = versionedMessageHandler.Post(e1);
+            var r2 = versionedMessageHandler.Post(e2, SerializerType.ProtocolBuffers);
+            var r3 = versionedMessageHandler.Post(e3, SerializerType.Json);
+            var r4 = versionedMessageHandler.Post(e4, SerializerType.Xml);
+
+            var responses = new List<TestEntityOne>
+            {
+                r1,
+                r2,
+                r3,
+                r4
+            };
+
+            stopwatch.Stop();
+
+            // Assert
+            this.WriteTimeElapsed(stopwatch);
+
+            Assert.That(responses.Count, Is.EqualTo(4));
+
+            Assert.That(responses[0].Value1, Is.EqualTo("test1"));
+            Assert.That(responses[1].Value1, Is.EqualTo("test2"));
+            Assert.That(responses[2].Value1, Is.EqualTo("test3"));
+            Assert.That(responses[3].Value1, Is.EqualTo("test4"));
+        }
+
+        /// <summary>
         /// Versioned the message handler when error and not throw on error expect handled.
         /// </summary>
         [Test]
