@@ -159,6 +159,32 @@ namespace Furysoft.Serializers.Versioning.Handlers
         }
 
         /// <summary>
+        /// Posts the specified message, handling without deserializing the message itself.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="action">The action.</param>
+        public void Post(VersionedMessage message, Action<VersionedMessage> action)
+        {
+            var thrown = default(Exception);
+
+            try
+            {
+                action(message);
+                return;
+            }
+            catch (Exception e)
+            {
+                thrown = e;
+                if (this.throwOnError)
+                {
+                    throw;
+                }
+            }
+
+            this.onError?.Invoke(thrown);
+        }
+
+        /// <summary>
         /// Posts the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
