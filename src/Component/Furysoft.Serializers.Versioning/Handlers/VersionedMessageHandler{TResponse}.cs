@@ -10,12 +10,12 @@ namespace Furysoft.Serializers.Versioning.Handlers
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Entities;
+    using Furysoft.Serializers.Entities;
     using Furysoft.Versioning;
     using JetBrains.Annotations;
 
     /// <summary>
-    /// The Versioned Message Handler
+    /// The Versioned Message Handler.
     /// </summary>
     /// <typeparam name="TResponse">The type of the response.</typeparam>
     [SuppressMessage("StyleCop", "SA1008", Justification = "StyleCop doesn't understand C#7 tuple return types yet.")]
@@ -23,27 +23,27 @@ namespace Furysoft.Serializers.Versioning.Handlers
     public sealed class VersionedMessageHandler<TResponse>
     {
         /// <summary>
-        /// The actions
+        /// The actions.
         /// </summary>
         private readonly Dictionary<DtoVersion, (Type type, Func<object, TResponse> action)> actions = new Dictionary<DtoVersion, (Type type, Func<object, TResponse> action)>();
 
         /// <summary>
-        /// The serializer type
+        /// The serializer type.
         /// </summary>
         private readonly SerializerType localSerializerType;
 
         /// <summary>
-        /// The throw on error
+        /// The throw on error.
         /// </summary>
         private readonly bool throwOnError;
 
         /// <summary>
-        /// The default action
+        /// The default action.
         /// </summary>
         private Func<string, TResponse> defaultAction;
 
         /// <summary>
-        /// The on error
+        /// The on error.
         /// </summary>
         private Func<Exception, TResponse> onError;
 
@@ -59,10 +59,10 @@ namespace Furysoft.Serializers.Versioning.Handlers
         }
 
         /// <summary>
-        /// Action to take if no action is found
+        /// Action to take if no action is found.
         /// </summary>
         /// <param name="action">The action.</param>
-        /// <returns>The <see cref="VersionedMessageHandler"/></returns>
+        /// <returns>The <see cref="VersionedMessageHandler"/>.</returns>
         public VersionedMessageHandler<TResponse> Else([InstantHandle] Func<string, TResponse> action)
         {
             this.defaultAction = action;
@@ -76,7 +76,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="action">The action.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public VersionedMessageHandler<TResponse> On<TEntity>([InstantHandle] Func<TEntity, TResponse> action)
             where TEntity : class
@@ -95,7 +95,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="dtoVersion">The dto version.</param>
         /// <param name="action">The action.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public VersionedMessageHandler<TResponse> On<TEntity>([NotNull] DtoVersion dtoVersion, [InstantHandle] Func<TEntity, TResponse> action)
             where TEntity : class
@@ -111,7 +111,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// Called when [error].
         /// </summary>
         /// <param name="action">The action.</param>
-        /// <returns>The <see cref="VersionedMessageHandler"/></returns>
+        /// <returns>The <see cref="VersionedMessageHandler"/>.</returns>
         public VersionedMessageHandler<TResponse> OnError([InstantHandle] Func<Exception, TResponse> action)
         {
             this.onError = action;
@@ -125,7 +125,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="message">The message.</param>
         /// <param name="serializerType">Type of the serializer.</param>
         /// <returns>
-        /// The <see cref="!:TResponse" />
+        /// The <see cref="!:TResponse" />.
         /// </returns>
         public TResponse Post(VersionedMessage message, SerializerType serializerType = SerializerType.None)
         {
@@ -175,7 +175,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="message">The message.</param>
         /// <param name="serializerType">Type of the serializer.</param>
         /// <returns>
-        /// The list of <see cref="!:TResponse" />
+        /// The list of <see cref="!:TResponse" />.
         /// </returns>
         public IEnumerable<TResponse> Post(BatchedVersionedMessage message, SerializerType serializerType = SerializerType.None)
         {

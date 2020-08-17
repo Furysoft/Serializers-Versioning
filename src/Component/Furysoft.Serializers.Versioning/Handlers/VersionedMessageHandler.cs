@@ -9,39 +9,39 @@ namespace Furysoft.Serializers.Versioning.Handlers
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using Entities;
+    using Furysoft.Serializers.Entities;
     using Furysoft.Versioning;
     using JetBrains.Annotations;
 
     /// <summary>
-    /// The Versioned Message Handler
+    /// The Versioned Message Handler.
     /// </summary>
     [SuppressMessage("StyleCop", "SA1008", Justification = "StyleCop doesn't understand C#7 tuple return types yet.")]
     [SuppressMessage("StyleCop", "SA1009", Justification = "StyleCop doesn't understand C#7 tuple return types yet.")]
     public sealed class VersionedMessageHandler
     {
         /// <summary>
-        /// The actions
+        /// The actions.
         /// </summary>
         private readonly Dictionary<DtoVersion, (Type type, Action<object> action)> actions = new Dictionary<DtoVersion, (Type type, Action<object> action)>();
 
         /// <summary>
-        /// The serializer type
+        /// The serializer type.
         /// </summary>
         private readonly SerializerType localSerializerType;
 
         /// <summary>
-        /// The throw on error
+        /// The throw on error.
         /// </summary>
         private readonly bool throwOnError;
 
         /// <summary>
-        /// The default action
+        /// The default action.
         /// </summary>
         private Action<string> defaultAction;
 
         /// <summary>
-        /// The on error
+        /// The on error.
         /// </summary>
         private Action<Exception> onError;
 
@@ -57,10 +57,10 @@ namespace Furysoft.Serializers.Versioning.Handlers
         }
 
         /// <summary>
-        /// Action to take if no action is found
+        /// Action to take if no action is found.
         /// </summary>
         /// <param name="action">The action.</param>
-        /// <returns>The <see cref="VersionedMessageHandler"/></returns>
+        /// <returns>The <see cref="VersionedMessageHandler"/>.</returns>
         public VersionedMessageHandler Else([InstantHandle] Action<string> action)
         {
             this.defaultAction = action;
@@ -74,7 +74,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="action">The action.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public VersionedMessageHandler On<TEntity>([InstantHandle] Action<TEntity> action)
             where TEntity : class
@@ -93,7 +93,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="dtoVersion">The dto version.</param>
         /// <param name="action">The action.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public VersionedMessageHandler On<TEntity>([NotNull] DtoVersion dtoVersion, [InstantHandle] Action<TEntity> action)
             where TEntity : class
@@ -109,7 +109,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// Called when [error].
         /// </summary>
         /// <param name="action">The action.</param>
-        /// <returns>The <see cref="VersionedMessageHandler"/></returns>
+        /// <returns>The <see cref="VersionedMessageHandler"/>.</returns>
         public VersionedMessageHandler OnError([InstantHandle] Action<Exception> action)
         {
             this.onError = action;
@@ -165,7 +165,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="action">The action.</param>
         public void Post(VersionedMessage message, Action<VersionedMessage> action)
         {
-            var thrown = default(Exception);
+            Exception thrown;
 
             try
             {

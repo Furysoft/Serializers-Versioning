@@ -10,7 +10,7 @@ namespace Furysoft.Serializers.Versioning.Tests
     using System.Diagnostics;
 
     /// <summary>
-    /// The Test Base
+    /// The Test Base.
     /// </summary>
     public abstract class TestBase
     {

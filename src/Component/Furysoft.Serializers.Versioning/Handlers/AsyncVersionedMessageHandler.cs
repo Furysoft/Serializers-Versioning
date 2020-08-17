@@ -10,39 +10,39 @@ namespace Furysoft.Serializers.Versioning.Handlers
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using Entities;
+    using Furysoft.Serializers.Entities;
     using Furysoft.Versioning;
     using JetBrains.Annotations;
 
     /// <summary>
-    /// The Async Versioned Message Handler
+    /// The Async Versioned Message Handler.
     /// </summary>
     [SuppressMessage("StyleCop", "SA1008", Justification = "StyleCop doesn't understand C#7 tuple return types yet.")]
     [SuppressMessage("StyleCop", "SA1009", Justification = "StyleCop doesn't understand C#7 tuple return types yet.")]
     public sealed class AsyncVersionedMessageHandler
     {
         /// <summary>
-        /// The actions
+        /// The actions.
         /// </summary>
         private readonly Dictionary<DtoVersion, (Type type, Func<object, Task> action)> actions = new Dictionary<DtoVersion, (Type type, Func<object, Task> action)>();
 
         /// <summary>
-        /// The serializer type
+        /// The serializer type.
         /// </summary>
         private readonly SerializerType localSerializerType;
 
         /// <summary>
-        /// The throw on error
+        /// The throw on error.
         /// </summary>
         private readonly bool throwOnError;
 
         /// <summary>
-        /// The default action
+        /// The default action.
         /// </summary>
         private Func<string, Task> defaultAction;
 
         /// <summary>
-        /// The on error
+        /// The on error.
         /// </summary>
         private Func<Exception, Task> onError;
 
@@ -58,11 +58,11 @@ namespace Furysoft.Serializers.Versioning.Handlers
         }
 
         /// <summary>
-        /// Action to take if no action is found
+        /// Action to take if no action is found.
         /// </summary>
         /// <param name="func">The function.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public AsyncVersionedMessageHandler Else([InstantHandle] Func<string, Task> func)
         {
@@ -77,7 +77,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="func">The function.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public AsyncVersionedMessageHandler On<TEntity>([InstantHandle] Func<TEntity, Task> func)
             where TEntity : class
@@ -96,7 +96,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="dtoVersion">The dto version.</param>
         /// <param name="func">The function.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public AsyncVersionedMessageHandler On<TEntity>([NotNull] DtoVersion dtoVersion, [InstantHandle] Func<TEntity, Task> func)
             where TEntity : class
@@ -113,7 +113,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// </summary>
         /// <param name="func">The function.</param>
         /// <returns>
-        /// The <see cref="VersionedMessageHandler" />
+        /// The <see cref="VersionedMessageHandler" />.
         /// </returns>
         public AsyncVersionedMessageHandler OnError([InstantHandle] Func<Exception, Task> func)
         {
@@ -128,7 +128,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="message">The message.</param>
         /// <param name="serializerType">Type of the serializer.</param>
         /// <returns>
-        /// The <see cref="Task" />
+        /// The <see cref="Task" />.
         /// </returns>
         public async Task PostAsync(BatchedVersionedMessage message, SerializerType serializerType = SerializerType.None)
         {
@@ -144,7 +144,7 @@ namespace Furysoft.Serializers.Versioning.Handlers
         /// <param name="message">The message.</param>
         /// <param name="serializerType">Type of the serializer.</param>
         /// <returns>
-        /// The <see cref="Task" />
+        /// The <see cref="Task" />.
         /// </returns>
         public async Task PostAsync(VersionedMessage message, SerializerType serializerType = SerializerType.None)
         {

@@ -10,7 +10,7 @@ namespace Furysoft.Serializers.Versioning.Tests.TestEntities
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The Test Entity One
+    /// The Test Entity One.
     /// </summary>
     [DataContract]
     public sealed class TestEntityTwo

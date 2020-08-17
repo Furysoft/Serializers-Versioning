@@ -10,7 +10,7 @@ namespace Furysoft.Serializers.Versioning.Tests.TestEntities
     using Furysoft.Versioning;
 
     /// <summary>
-    /// The Test Entity One
+    /// The Test Entity One.
     /// </summary>
     [DataContract]
     [DtoVersion(typeof(TestEntityOne), 1, 0, 0)]

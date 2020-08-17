@@ -6,11 +6,11 @@
 
 namespace Furysoft.Serializers.Versioning
 {
-    using Entities;
+    using Furysoft.Serializers.Entities;
     using Furysoft.Versioning;
 
     /// <summary>
-    /// The Versioned Message Serializers
+    /// The Versioned Message Serializers.
     /// </summary>
     public static class VersionedMessageSerializers
     {
@@ -19,7 +19,7 @@ namespace Furysoft.Serializers.Versioning
         /// </summary>
         /// <param name="serialized">The serialized.</param>
         /// <param name="serializerType">Type of the serializer.</param>
-        /// <returns>The <see cref="VersionedMessage"/></returns>
+        /// <returns>The <see cref="VersionedMessage"/>.</returns>
         public static VersionedMessage DeserializeToVersionedMessage(
             this string serialized,
             SerializerType serializerType = SerializerType.ProtocolBuffers)
@@ -33,7 +33,7 @@ namespace Furysoft.Serializers.Versioning
         /// <param name="serialized">The serialized.</param>
         /// <param name="dtoVersion">The dto version.</param>
         /// <param name="serializerType">Type of the serializer.</param>
-        /// <returns>The <see cref="VersionedMessage"/></returns>
+        /// <returns>The <see cref="VersionedMessage"/>.</returns>
         public static VersionedMessage DeserializeToVersionedMessage(
             this string serialized,
             DtoVersion dtoVersion,
@@ -50,7 +50,7 @@ namespace Furysoft.Serializers.Versioning
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
         /// <param name="serializerType">Type of the serializer.</param>
-        /// <returns>The <see cref="VersionedMessage"/></returns>
+        /// <returns>The <see cref="VersionedMessage"/>.</returns>
         public static VersionedMessage SerializeToVersionedMessage<TEntity>(
             this TEntity entity,
             SerializerType serializerType = SerializerType.ProtocolBuffers)
@@ -62,7 +62,7 @@ namespace Furysoft.Serializers.Versioning
             return new VersionedMessage
             {
                 Data = data,
-                Version = version
+                Version = version,
             };
         }
 
@@ -73,7 +73,7 @@ namespace Furysoft.Serializers.Versioning
         /// <param name="entity">The entity.</param>
         /// <param name="dtoVersion">The dto version.</param>
         /// <param name="serializerType">Type of the serializer.</param>
-        /// <returns>The <see cref="VersionedMessage"/></returns>
+        /// <returns>The <see cref="VersionedMessage"/>.</returns>
         public static VersionedMessage SerializeToVersionedMessage<TEntity>(
             this TEntity entity,
             DtoVersion dtoVersion,
@@ -85,7 +85,7 @@ namespace Furysoft.Serializers.Versioning
             return new VersionedMessage
             {
                 Data = data,
-                Version = dtoVersion
+                Version = dtoVersion,
             };
         }
     }

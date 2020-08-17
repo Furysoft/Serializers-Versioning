@@ -10,14 +10,14 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using Entities;
+    using Furysoft.Serializers.Entities;
+    using Furysoft.Serializers.Versioning.Handlers;
+    using Furysoft.Serializers.Versioning.Tests.TestEntities;
     using Furysoft.Versioning;
-    using Handlers;
     using NUnit.Framework;
-    using TestEntities;
 
     /// <summary>
-    /// The Versioned Message Handler Tests
+    /// The Versioned Message Handler Tests.
     /// </summary>
     [TestFixture]
     public sealed class VersionedMessageHandlerTResponseTests : TestBase
@@ -50,7 +50,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
                     new TestEntityOne { Value1 = "test", Value2 = 42 }.SerializeToVersionedMessage(),
                     new TestEntityTwo { Value1 = "Value1", Value2 = new DateTime(2018, 1, 1) }.SerializeToVersionedMessage(),
                     new TestEntityThree { Value1 = 3 }.SerializeToVersionedMessage(),
-                }
+                },
             };
 
             // Act
@@ -105,7 +105,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
                 r1,
                 r2,
                 r3,
-                r4
+                r4,
             };
 
             stopwatch.Stop();
@@ -144,7 +144,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityOne().SerializeToString(SerializerType.Json),
-                Version = typeof(TestEntityOne).GetVersion()
+                Version = typeof(TestEntityOne).GetVersion(),
             };
 
             // Act
@@ -168,8 +168,6 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
         public void VersionedMessageHandler_WhenErrorAndThrowOnError_ExpectThrows()
         {
             // Arrange
-            var exception = default(Exception);
-
             var versionedMessageHandler = new VersionedMessageHandler<TestEntityOne>(SerializerType.Json, true)
                 .On<TestEntityOne>(e => throw new DivideByZeroException())
                 .On<TestEntityTwo>(e => null)
@@ -177,14 +175,13 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
                 .OnError(
                     e =>
                     {
-                        exception = e;
                         return null;
                     });
 
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityOne().SerializeToString(SerializerType.Json),
-                Version = typeof(TestEntityOne).GetVersion()
+                Version = typeof(TestEntityOne).GetVersion(),
             };
 
             // Act
@@ -219,7 +216,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityThree { Value1 = 25.3m }.SerializeToString(SerializerType.Json),
-                Version = typeof(TestEntityThree).GetVersion()
+                Version = typeof(TestEntityThree).GetVersion(),
             };
 
             // Act
@@ -260,7 +257,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityOne { Value1 = "test", Value2 = 42 }.SerializeToString(),
-                Version = typeof(TestEntityOne).GetVersion()
+                Version = typeof(TestEntityOne).GetVersion(),
             };
 
             // Act
@@ -301,7 +298,7 @@ namespace Furysoft.Serializers.Versioning.Tests.VersionedMessageHandlers
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityTwo { Value1 = "test", Value2 = new DateTime(2018, 1, 1) }.SerializeToString(),
-                Version = typeof(TestEntityTwo).GetVersion()
+                Version = typeof(TestEntityTwo).GetVersion(),
             };
 
             // Act

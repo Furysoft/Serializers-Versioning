@@ -11,14 +11,14 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
-    using Entities;
+    using Furysoft.Serializers.Entities;
+    using Furysoft.Serializers.Versioning.Handlers;
+    using Furysoft.Serializers.Versioning.Tests.TestEntities;
     using Furysoft.Versioning;
-    using Handlers;
     using NUnit.Framework;
-    using TestEntities;
 
     /// <summary>
-    /// The AsyncVersionedMessageHandler Tests
+    /// The AsyncVersionedMessageHandler Tests.
     /// </summary>
     [TestFixture]
     public sealed class AsyncVersionedMessageHandlerTResponseTests : TestBase
@@ -26,7 +26,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         /// <summary>
         /// Versioned the message handler when batched versioned message expect all processed.
         /// </summary>
-        /// <returns>The <see cref="Task"/></returns>
+        /// <returns>The <see cref="Task"/>.</returns>
         [Test]
         public async Task VersionedMessageHandler_WhenBatchedVersionedMessage_ExpectAllProcessed()
         {
@@ -38,19 +38,19 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
                     e => Task.FromResult(new TestEntityOne
                     {
                         Value1 = e.Value1,
-                        Value2 = e.Value2
+                        Value2 = e.Value2,
                     }))
                 .On<TestEntityTwo>(
                     e => Task.FromResult(new TestEntityOne
                     {
                         Value1 = e.Value1,
-                        Value2 = 5
+                        Value2 = 5,
                     }))
                 .Else(
                     s => Task.FromResult(new TestEntityOne
                     {
                         Value1 = "TestVal",
-                        Value2 = 5
+                        Value2 = 5,
                     }))
                 .OnError(
                     e =>
@@ -66,7 +66,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
                     new TestEntityOne { Value1 = "test", Value2 = 42 }.SerializeToVersionedMessage(),
                     new TestEntityTwo { Value1 = "Value1", Value2 = new DateTime(2018, 1, 1) }.SerializeToVersionedMessage(),
                     new TestEntityThree { Value1 = 3 }.SerializeToVersionedMessage(),
-                }
+                },
             };
 
             // Act
@@ -98,7 +98,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         /// Versioned the message handler when different serializations expect all processed.
         /// </summary>
         /// <returns>
-        /// The <see cref="Task" />
+        /// The <see cref="Task" />.
         /// </returns>
         [Test]
         public async Task VersionedMessageHandler_WhenDifferentSerializations_ExpectAllProcessed()
@@ -124,7 +124,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
                 r1,
                 r2,
                 r3,
-                r4
+                r4,
             };
 
             stopwatch.Stop();
@@ -143,7 +143,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         /// <summary>
         /// Versioned the message handler when error and not throw on error expect handled.
         /// </summary>
-        /// <returns>The <see cref="Task"/></returns>
+        /// <returns>The <see cref="Task"/>.</returns>
         [Test]
         public async Task VersionedMessageHandler_WhenErrorAndNotThrowOnError_ExpectHandled()
         {
@@ -158,7 +158,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
                         new TestEntityOne
                         {
                             Value2 = 5,
-                            Value1 = e.Value1
+                            Value1 = e.Value1,
                         }))
                 .Else(
                     s =>
@@ -176,7 +176,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityOne().SerializeToString(SerializerType.Json),
-                Version = typeof(TestEntityOne).GetVersion()
+                Version = typeof(TestEntityOne).GetVersion(),
             };
 
             // Act
@@ -201,10 +201,6 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         public void VersionedMessageHandler_WhenErrorAndThrowOnError_ExpectThrows()
         {
             // Arrange
-            var entityTwo = default(TestEntityTwo);
-            var defaultValue = default(string);
-            var exception = default(Exception);
-
             var versionedMessageHandler = new AsyncVersionedMessageHandler<TestEntityOne>(SerializerType.Json, true)
                 .On<TestEntityOne>(e => throw new DivideByZeroException())
                 .On<TestEntityTwo>(e => Task.FromResult(default(TestEntityOne)))
@@ -214,7 +210,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityOne().SerializeToString(SerializerType.Json),
-                Version = typeof(TestEntityOne).GetVersion()
+                Version = typeof(TestEntityOne).GetVersion(),
             };
 
             // Act
@@ -229,7 +225,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         /// <summary>
         /// Versioned the message handler when no match expect default.
         /// </summary>
-        /// <returns>The <see cref="Task"/></returns>
+        /// <returns>The <see cref="Task"/>.</returns>
         [Test]
         public async Task VersionedMessageHandler_WhenNoMatch_ExpectDefault()
         {
@@ -243,7 +239,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
                     s => Task.FromResult(new TestEntityOne
                     {
                         Value2 = 42,
-                        Value1 = "DEFAULT"
+                        Value1 = "DEFAULT",
                     }))
                 .OnError(
                     e =>
@@ -255,7 +251,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityThree { Value1 = 25.3m }.SerializeToString(SerializerType.Json),
-                Version = typeof(TestEntityThree).GetVersion()
+                Version = typeof(TestEntityThree).GetVersion(),
             };
 
             // Act
@@ -275,7 +271,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         /// <summary>
         /// Versioned message handler when version match expect action.
         /// </summary>
-        /// <returns>The <see cref="Task"/></returns>
+        /// <returns>The <see cref="Task"/>.</returns>
         [Test]
         public async Task VersionedMessageHandler_WhenVersionMatchOnFirst_ExpectAction()
         {
@@ -296,7 +292,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityOne { Value1 = "test", Value2 = 42 }.SerializeToString(),
-                Version = typeof(TestEntityOne).GetVersion()
+                Version = typeof(TestEntityOne).GetVersion(),
             };
 
             // Act
@@ -316,7 +312,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
         /// <summary>
         /// Versioned message handler when version match expect action.
         /// </summary>
-        /// <returns>The <see cref="Task"/></returns>
+        /// <returns>The <see cref="Task"/>.</returns>
         [Test]
         public async Task VersionedMessageHandler_WhenVersionMatchOnSecond_ExpectAction()
         {
@@ -337,7 +333,7 @@ namespace Furysoft.Serializers.Versioning.Tests.AsyncVersionedMessageHandler
             var versionedMessage = new VersionedMessage
             {
                 Data = new TestEntityTwo { Value1 = "test", Value2 = new DateTime(2018, 1, 1) }.SerializeToString(),
-                Version = typeof(TestEntityTwo).GetVersion()
+                Version = typeof(TestEntityTwo).GetVersion(),
             };
 
             // Act
