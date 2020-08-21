@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Furysoft.Serializers" Version="1.0.2" />
+    <PackageReference Include="Furysoft.Serializers" Version="1.0.4" />
     <PackageReference Include="Furysoft.Versioning" Version="1.0.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.0" />
     <PackageReference Include="nunit" Version="3.12.0" />

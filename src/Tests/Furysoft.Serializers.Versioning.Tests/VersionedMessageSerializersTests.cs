@@ -133,7 +133,7 @@ namespace Furysoft.Serializers.Versioning.Tests
             Assert.That(vm, Is.Not.Null);
 
             Assert.That(vm.Version, Is.EqualTo(new DtoVersion(typeof(TestEntityOne), 1, 0, 0)));
-            Assert.That(vm.Data, Is.EqualTo("CgV0ZXN0MRAM"));
+            Assert.That(vm.Data, Is.EqualTo("\n\u0005test1\u0010\f"));
         }
     }
 }
