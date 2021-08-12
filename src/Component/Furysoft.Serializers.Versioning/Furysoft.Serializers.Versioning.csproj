@@ -23,9 +23,13 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Furysoft.Serializers" Version="2.0.1" />
-    <PackageReference Include="Furysoft.Versioning" Version="1.0.5" />
-    <PackageReference Include="Jetbrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="Furysoft.Serializers" Version="2.0.2" />
+    <PackageReference Include="Furysoft.Versioning" Version="1.0.9" />
+    <PackageReference Include="Jetbrains.Annotations" Version="2021.2.0" />
+    <PackageReference Include="MinVer" Version="2.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Stylecop.Analyzers" Version="1.1.118" PrivateAssets="All" />
   </ItemGroup>
 
